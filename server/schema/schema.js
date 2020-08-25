@@ -12,23 +12,6 @@ const {
   GraphQLList,
 } = graphql;
 
-// //Dummy Book
-// var books = [
-//
-//   {
-//     title: "Learn Python The Hard Way",
-//     genre: "Learning",
-//     id: "3",
-//     authorid: "2",
-//   },
-//   {
-//     title: "The Command Line Crash Course",
-//     genre: "Learning",
-//     id: "6",
-//     authorid: "2",
-//   },
-// ];
-
 const BookType = new GraphQLObjectType({
   name: "Book",
   fields: () => ({
@@ -39,6 +22,7 @@ const BookType = new GraphQLObjectType({
       type: AuthorType,
       resolve(parent) {
         // return __.find(authors, { id: parent.authorid });
+        return Author.findById(parent.authorid);
       },
     },
   }),
@@ -54,6 +38,7 @@ const AuthorType = new GraphQLObjectType({
       type: new GraphQLList(BookType),
       resolve(parent) {
         // return __.filter(books, { authorid: parent.id }); //--.filter(), not __.find()
+        return Book.find({ authorid: parent.id });
       },
     },
   }),
@@ -69,6 +54,7 @@ const RootQuery = new GraphQLObjectType({
       resolve(parent, args) {
         //code to get data from db / other sources
         //return __.find(books, { id: args.id });
+        return Book.findById(args.id);
       },
     },
     author: {
@@ -76,18 +62,21 @@ const RootQuery = new GraphQLObjectType({
       args: { id: { type: GraphQLID } },
       resolve(parent, args) {
         //return __.find(authors, { id: args.id });
+        return Author.findById(args.id);
       },
     },
     books: {
       type: new GraphQLList(BookType),
       resolve(parent) {
         //return books;
+        return Book.find({});
       },
     },
     authors: {
       type: new GraphQLList(AuthorType),
       resolve(parent) {
         //return authors;
+        return Author.find({});
       },
     },
   },
@@ -133,27 +122,3 @@ module.exports = new GraphQLSchema({
   query: RootQuery,
   mutation: Mutation,
 });
-
-//try the following query. It's Fun! an infinite loop!
-
-// {
-//   books{
-//   	id
-//     title
-//     genre
-//     author{
-//       name
-//       age
-//       books{
-//         title
-//         author{
-//           name
-//           books{
-//             title
-//           }
-//         }
-//       }
-//     }
-
-//     }
-// }
