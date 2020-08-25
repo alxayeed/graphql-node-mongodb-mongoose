@@ -14,20 +14,7 @@ const {
 
 // //Dummy Book
 // var books = [
-//   { title: "Pro Python", genre: "Learning", id: "1", authorid: "1" },
-//   { title: "Pro Django", genre: "Django", id: "4", authorid: "1" },
-//   {
-//     title: "Automate the Boring Stuff With Python",
-//     genre: "Education",
-//     id: "2",
-//     authorid: "3",
-//   },
-//   {
-//     title: "Coding with Minecraft",
-//     genre: "Education",
-//     id: "5",
-//     authorid: "3",
-//   },
+//
 //   {
 //     title: "Learn Python The Hard Way",
 //     genre: "Learning",
@@ -40,13 +27,6 @@ const {
 //     id: "6",
 //     authorid: "2",
 //   },
-// ];
-
-// //Dummy Author
-// var authors = [
-//   { name: "Marty Alchin", age: 30, id: "1" },
-//   { name: "Zed A. Shaw", age: 33, id: "2" },
-//   { name: "Al Sweigart", age: 26, id: "3" },
 // ];
 
 const BookType = new GraphQLObjectType({
@@ -128,6 +108,22 @@ const Mutation = new GraphQLObjectType({
           age: args.age,
         });
         return author.save();
+      },
+    },
+    addBook: {
+      type: BookType,
+      args: {
+        title: { type: GraphQLString },
+        genre: { type: GraphQLString },
+        authorid: { type: GraphQLID },
+      },
+      resolve(parent, args) {
+        let book = new Book({
+          title: args.title,
+          genre: args.genre,
+          authorid: args.authorid,
+        });
+        return book.save();
       },
     },
   },
