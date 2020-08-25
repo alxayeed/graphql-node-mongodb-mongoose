@@ -7,7 +7,45 @@ const {
   GraphQLSchema,
   GraphQLID,
   GraphQLInt,
+  GraphQLList,
 } = graphql;
+
+//Dummy Book
+var books = [
+  { title: "Pro Python", genre: "Learning", id: "1", authorid: "1" },
+  { title: "Pro Django", genre: "Django", id: "4", authorid: "1" },
+  {
+    title: "Automate the Boring Stuff With Python",
+    genre: "Education",
+    id: "2",
+    authorid: "3",
+  },
+  {
+    title: "Coding with Minecraft",
+    genre: "Education",
+    id: "5",
+    authorid: "3",
+  },
+  {
+    title: "Learn Python The Hard Way",
+    genre: "Learning",
+    id: "3",
+    authorid: "2",
+  },
+  {
+    title: "The Command Line Crash Course",
+    genre: "Learning",
+    id: "6",
+    authorid: "2",
+  },
+];
+
+//Dummy Author
+var authors = [
+  { name: "Marty Alchin", age: 30, id: "1" },
+  { name: "Zed A. Shaw", age: 33, id: "2" },
+  { name: "Al Sweigart", age: 26, id: "3" },
+];
 
 const BookType = new GraphQLObjectType({
   name: "Book",
@@ -15,19 +53,15 @@ const BookType = new GraphQLObjectType({
     id: { type: GraphQLID },
     title: { type: GraphQLString },
     genre: { type: GraphQLString },
+    author: {
+      type: AuthorType,
+      resolve(parent) {
+        console.log(args);
+        return __.find(authors, { id: parent.authorid });
+      },
+    },
   }),
 });
-
-//Dummy Book
-var books = [
-  { title: "Pro Python", genre: "Learning", id: "1" },
-  {
-    title: "Automate the Boring Stuff With Python",
-    genre: "Education",
-    id: "2",
-  },
-  { title: "LEarn Python THe Hard Way", genre: "Learning", id: "3" },
-];
 
 const AuthorType = new GraphQLObjectType({
   name: "Author",
@@ -35,14 +69,14 @@ const AuthorType = new GraphQLObjectType({
     id: { type: GraphQLID },
     name: { type: GraphQLString },
     age: { type: GraphQLInt },
+    books: {
+      type: new GraphQLList(BookType),
+      resolve(parent) {
+        return __.filter(books, { authorid: parent.id }); //--.filter(), not __.find()
+      },
+    },
   }),
 });
-
-//Dummy Author
-var authors = [
-  { name: "Marty Alchin", age: 30, id: "1" },
-  { name: "Zed A. Shaw", age: 33, id: "2" },
-];
 
 //Root Query
 const RootQuery = new GraphQLObjectType({
