@@ -1,5 +1,7 @@
 const graphql = require("graphql");
 const __ = require("lodash");
+const Book = require("../models/book");
+const Author = require("../models/author");
 
 const {
   GraphQLObjectType,
@@ -10,42 +12,42 @@ const {
   GraphQLList,
 } = graphql;
 
-//Dummy Book
-var books = [
-  { title: "Pro Python", genre: "Learning", id: "1", authorid: "1" },
-  { title: "Pro Django", genre: "Django", id: "4", authorid: "1" },
-  {
-    title: "Automate the Boring Stuff With Python",
-    genre: "Education",
-    id: "2",
-    authorid: "3",
-  },
-  {
-    title: "Coding with Minecraft",
-    genre: "Education",
-    id: "5",
-    authorid: "3",
-  },
-  {
-    title: "Learn Python The Hard Way",
-    genre: "Learning",
-    id: "3",
-    authorid: "2",
-  },
-  {
-    title: "The Command Line Crash Course",
-    genre: "Learning",
-    id: "6",
-    authorid: "2",
-  },
-];
+// //Dummy Book
+// var books = [
+//   { title: "Pro Python", genre: "Learning", id: "1", authorid: "1" },
+//   { title: "Pro Django", genre: "Django", id: "4", authorid: "1" },
+//   {
+//     title: "Automate the Boring Stuff With Python",
+//     genre: "Education",
+//     id: "2",
+//     authorid: "3",
+//   },
+//   {
+//     title: "Coding with Minecraft",
+//     genre: "Education",
+//     id: "5",
+//     authorid: "3",
+//   },
+//   {
+//     title: "Learn Python The Hard Way",
+//     genre: "Learning",
+//     id: "3",
+//     authorid: "2",
+//   },
+//   {
+//     title: "The Command Line Crash Course",
+//     genre: "Learning",
+//     id: "6",
+//     authorid: "2",
+//   },
+// ];
 
-//Dummy Author
-var authors = [
-  { name: "Marty Alchin", age: 30, id: "1" },
-  { name: "Zed A. Shaw", age: 33, id: "2" },
-  { name: "Al Sweigart", age: 26, id: "3" },
-];
+// //Dummy Author
+// var authors = [
+//   { name: "Marty Alchin", age: 30, id: "1" },
+//   { name: "Zed A. Shaw", age: 33, id: "2" },
+//   { name: "Al Sweigart", age: 26, id: "3" },
+// ];
 
 const BookType = new GraphQLObjectType({
   name: "Book",
@@ -56,7 +58,7 @@ const BookType = new GraphQLObjectType({
     author: {
       type: AuthorType,
       resolve(parent) {
-        return __.find(authors, { id: parent.authorid });
+        // return __.find(authors, { id: parent.authorid });
       },
     },
   }),
@@ -71,7 +73,7 @@ const AuthorType = new GraphQLObjectType({
     books: {
       type: new GraphQLList(BookType),
       resolve(parent) {
-        return __.filter(books, { authorid: parent.id }); //--.filter(), not __.find()
+        // return __.filter(books, { authorid: parent.id }); //--.filter(), not __.find()
       },
     },
   }),
@@ -86,26 +88,46 @@ const RootQuery = new GraphQLObjectType({
       args: { id: { type: GraphQLID } },
       resolve(parent, args) {
         //code to get data from db / other sources
-        return __.find(books, { id: args.id });
+        //return __.find(books, { id: args.id });
       },
     },
     author: {
       type: AuthorType,
       args: { id: { type: GraphQLID } },
       resolve(parent, args) {
-        return __.find(authors, { id: args.id });
+        //return __.find(authors, { id: args.id });
       },
     },
     books: {
       type: new GraphQLList(BookType),
       resolve(parent) {
-        return books;
+        //return books;
       },
     },
     authors: {
       type: new GraphQLList(AuthorType),
       resolve(parent) {
-        return authors;
+        //return authors;
+      },
+    },
+  },
+});
+
+const Mutation = new GraphQLObjectType({
+  name: "Mutation",
+  fields: {
+    addAuthor: {
+      type: AuthorType,
+      args: {
+        name: { type: GraphQLString },
+        age: { type: GraphQLInt },
+      },
+      resolve(parent, args) {
+        let author = new Author({
+          name: args.name,
+          age: args.age,
+        });
+        return author.save();
       },
     },
   },
@@ -113,6 +135,7 @@ const RootQuery = new GraphQLObjectType({
 
 module.exports = new GraphQLSchema({
   query: RootQuery,
+  mutation: Mutation,
 });
 
 //try the following query. It's Fun! an infinite loop!
