@@ -56,7 +56,6 @@ const BookType = new GraphQLObjectType({
     author: {
       type: AuthorType,
       resolve(parent) {
-        console.log(args);
         return __.find(authors, { id: parent.authorid });
       },
     },
@@ -97,9 +96,45 @@ const RootQuery = new GraphQLObjectType({
         return __.find(authors, { id: args.id });
       },
     },
+    books: {
+      type: new GraphQLList(BookType),
+      resolve(parent) {
+        return books;
+      },
+    },
+    authors: {
+      type: new GraphQLList(AuthorType),
+      resolve(parent) {
+        return authors;
+      },
+    },
   },
 });
 
 module.exports = new GraphQLSchema({
   query: RootQuery,
 });
+
+//try the following query. It's Fun! an infinite loop!
+
+// {
+//   books{
+//   	id
+//     title
+//     genre
+//     author{
+//       name
+//       age
+//       books{
+//         title
+//         author{
+//           name
+//           books{
+//             title
+//           }
+//         }
+//       }
+//     }
+
+//     }
+// }
