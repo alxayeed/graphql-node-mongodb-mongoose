@@ -3,8 +3,12 @@ const graphqlHTTP = require("express-graphql").graphqlHTTP;
 const schema = require("./schema/schema");
 const mongoose = require("mongoose", { useUnifiedTopology: true });
 const dotenv = require("dotenv");
+const cors = require("cors"); //cross-origin request
 
 const app = express();
+
+//allowing cross-origin request to accept request from client side
+app.use(cors());
 
 // middleware
 app.use(
