@@ -24,7 +24,10 @@ const getAuthorsQuery = gql`
 //making queries to add books
 const addBookMutation = gql`
   mutation {
-    addBook(title: "", genre: "", authorid: "")
+    addBook(title: "", genre: "", authorid: "") {
+      title
+      genre
+    }
   }
 `;
 
