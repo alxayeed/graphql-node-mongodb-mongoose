@@ -1,4 +1,4 @@
-import { gql } from "apollo-boost";
+import { gql } from "apollo-boost"; //to make query
 
 //Making query to get all books
 const getBooksQuery = gql`
@@ -21,4 +21,11 @@ const getAuthorsQuery = gql`
   }
 `;
 
-export { getBooksQuery, getAuthorsQuery };
+//making queries to add books
+const addBookMutation = gql`
+  mutation {
+    addBook(title: "", genre: "", authorid: "")
+  }
+`;
+
+export { getBooksQuery, getAuthorsQuery, addBookMutation };

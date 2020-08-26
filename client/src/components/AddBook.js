@@ -1,11 +1,21 @@
 import React, { Component } from "react";
-import { gql } from "apollo-boost"; //to make query
 import { graphql } from "react-apollo"; //to bind the query with the component
-import { getAuthorsQuery } from "../queries/queries";
+import { flowRight as compose } from "lodash"; //to export multiple query
+import { getAuthorsQuery, addBookMutation } from "../queries/queries";
 
 class AddBook extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      name: "",
+      genre: "",
+      authorid: "",
+    };
+  }
+
   displayAuthor() {
-    var data = this.props.data;
+    var data = this.props.getAuthorsQuery;
+    console.log(this.props);
     if (data.loading) {
       return <option>Loading Authors</option>;
     } else {
@@ -17,24 +27,36 @@ class AddBook extends Component {
         );
       });
     }
-    console.log(data);
   }
+
+  //submitForm method
+  submitForm(e) {
+    e.preventDefault();
+    console.log(this.state);
+  }
+
   render() {
     return (
-      <form id="add-book">
+      <form id="add-book" onSubmit={this.submitForm.bind(this)}>
         <div className="fied">
           <label>Book Name:</label>
-          <input type="text" />
+          <input
+            type="text"
+            onChange={(e) => this.setState({ name: e.target.value })}
+          />
         </div>
 
         <div className="fied">
           <label>Genre:</label>
-          <input type="text" />
+          <input
+            type="text"
+            onChange={(e) => this.setState({ genre: e.target.value })}
+          />
         </div>
 
         <div className="fied">
           <label>Author:</label>
-          <select>
+          <select onChange={(e) => this.setState({ authorid: e.target.value })}>
             <option> Select Author</option>
             {this.displayAuthor()}
           </select>
@@ -46,4 +68,7 @@ class AddBook extends Component {
   }
 }
 
-export default graphql(getAuthorsQuery)(AddBook);
+export default compose(
+  graphql(getAuthorsQuery, { name: "getAuthorsQuery" }),
+  graphql(addBookMutation, { name: "addBookMutation" })
+)(AddBook);
