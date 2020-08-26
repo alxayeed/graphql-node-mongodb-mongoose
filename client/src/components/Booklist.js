@@ -29,9 +29,7 @@ class BookList extends Component {
     console.log(this.props);
     return (
       <div className="App">
-        <ul id="book-list">
-          <li>{this.displayBooks()}</li>
-        </ul>
+        <ul id="book-list">{this.displayBooks()}</ul>
       </div>
     );
   }
