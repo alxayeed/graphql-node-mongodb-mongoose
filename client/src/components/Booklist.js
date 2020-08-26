@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Component } from "react";
 import { gql } from "apollo-boost"; //to make query
 import { graphql } from "react-apollo"; //to bind the query with the component
 
@@ -6,21 +6,35 @@ import { graphql } from "react-apollo"; //to bind the query with the component
 const getBooksQuery = gql`
   {
     books {
+      id
       title
       genre
     }
   }
 `;
 
-function BookList(props) {
-  console.log(props);
-  return (
-    <div className="App">
-      <ul id="book-list">
-        <li>Book 1</li>
-      </ul>
-    </div>
-  );
+class BookList extends Component {
+  displayBooks() {
+    var data = this.props.data;
+
+    if (data.loading) {
+      return <div>Loading Books.....</div>;
+    } else {
+      return data.books.map((books) => {
+        return <li key={books.id}>{books.title}</li>;
+      });
+    }
+  }
+  render() {
+    console.log(this.props);
+    return (
+      <div className="App">
+        <ul id="book-list">
+          <li>{this.displayBooks()}</li>
+        </ul>
+      </div>
+    );
+  }
 }
 
 //binding the query with component while exporting
